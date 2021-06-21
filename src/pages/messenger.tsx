@@ -1,22 +1,17 @@
-import React, { useEffect } from 'react';
-import Head from 'next/head';
-import Admin from '../layouts/Admin';
+import Head from "next/head";
+import React from "react";
+import Admin from "../layouts/Admin";
 
-export default function Dashboard() {
-
-  useEffect(() => {
-    //api.get('/users');
-  }, []);
-
+export default function Messenger() {
   return (
     <div>
       <Head>
-        <title>Dashboard</title>
+        <title>Messenger</title>
       </Head>
 
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Messenger</h1>
         </div>
       </header>
       <main>
@@ -32,4 +27,4 @@ export default function Dashboard() {
   );
 }
 
-Dashboard.layout = Admin;
+Messenger.layout = Admin;
