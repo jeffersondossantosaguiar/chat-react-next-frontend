@@ -1,9 +1,11 @@
 import { Disclosure, Menu, Transition } from '@headlessui/react';
-import React, { Fragment, useContext } from "react";
+import React, { Fragment, useCallback, useContext, useEffect } from "react";
 import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
 import { AuthContext } from '../../contexts/AuthContext';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import Router from 'next/router';
+import { destroyCookie } from 'nookies';
 
 const navigation = [
   {
@@ -21,9 +23,19 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
+function singOut() {
+  console.log('teste');
+
+  destroyCookie(null, 'nextauth.token');
+  Router.push('/');
+}
+
 export default function NavBar() {
   const { user } = useContext(AuthContext);
   const router = useRouter();
+
+
+
   return (
     <>
       <Disclosure as="nav" className="bg-gray-800">
@@ -111,6 +123,7 @@ export default function NavBar() {
                                 <a
                                   href="#"
                                   className='block px-4 py-2 text-sm text-gray-700'
+                                  onClick={() => singOut()}
                                 >
                                   Sign out
                                 </a>

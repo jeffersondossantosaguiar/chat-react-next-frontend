@@ -1,6 +1,9 @@
 import React, { useEffect } from 'react';
 import Head from 'next/head';
 import Admin from '../layouts/Admin';
+import { GetServerSideProps } from 'next';
+import { getAPIClient } from '../services/axios';
+import { parseCookies } from 'nookies';
 
 export default function Dashboard() {
 
@@ -33,3 +36,24 @@ export default function Dashboard() {
 }
 
 Dashboard.layout = Admin;
+
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const apiClient = getAPIClient(ctx);
+  const { ['nextauth.token']: token } = parseCookies(ctx);
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      }
+    };
+  }
+  /* 
+    await apiClient.get('/users') */
+
+  return {
+    props: {}
+  };
+};

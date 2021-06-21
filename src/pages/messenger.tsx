@@ -1,6 +1,9 @@
+import { GetServerSideProps } from "next";
 import Head from "next/head";
+import { parseCookies } from "nookies";
 import React from "react";
 import Admin from "../layouts/Admin";
+import { getAPIClient } from "../services/axios";
 
 export default function Messenger() {
   return (
@@ -28,3 +31,23 @@ export default function Messenger() {
 }
 
 Messenger.layout = Admin;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const apiClient = getAPIClient(ctx);
+  const { ['nextauth.token']: token } = parseCookies(ctx);
+
+  if (!token) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      }
+    };
+  }
+  /* 
+    await apiClient.get('/users') */
+
+  return {
+    props: {}
+  };
+};
