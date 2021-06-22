@@ -2,6 +2,9 @@ import { GetServerSideProps } from "next";
 import Head from "next/head";
 import { parseCookies } from "nookies";
 import React from "react";
+import ChatOnline from "../components/ChatOnline/ChatOnline";
+import Conversation from "../components/Conversations/Conversation";
+import Message from "../components/Message/Message";
 import Admin from "../layouts/Admin";
 import { getAPIClient } from "../services/axios";
 
@@ -12,20 +15,41 @@ export default function Messenger() {
         <title>Messenger</title>
       </Head>
 
-      <header className="bg-white shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-gray-900">Messenger</h1>
-        </div>
-      </header>
-      <main>
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-          {/* Replace with your content */}
-          <div className="px-4 py-6 sm:px-0">
-            <div className="border-4 border-dashed border-gray-200 rounded-lg h-96" />
+      <div className="flex">
+        <div className="h-full md:w-1/5 p-4">
+          <div>
+            <input type="search" placeholder="Search for friends" className="rounded w-full" />
+            <Conversation />
+            <Conversation />
+            <Conversation />
+            <Conversation />
           </div>
-          {/* /End replace */}
         </div>
-      </main>
+        <div className="h-full md:w-3/5 p-4">
+          <div className="flex max-h-screen flex-col justify-between">
+            <div className="h-modificada overflow-y-scroll pr-8">
+              <Message own={false} />
+              <Message own={false} />
+              <Message own />
+              <Message own={false} />
+              <Message own={false} />
+              <Message own />
+              <Message own={false} />
+              <Message own={false} />
+              <Message own />
+            </div>
+            <div className="flex mt-2 content-center items-center justify-between">
+              <textarea className="w-4/5 h-32 p-4" placeholder="write something"></textarea>
+              <button className="border-none bg-green-500 text-white cursor-pointer rounded-2xl w-24 h-12 hover:bg-green-700">Send</button>
+            </div>
+          </div>
+        </div>
+        <div className="h-full md:w-1/5 p-4">
+          <div className="chatOnlineWrapper">
+            <ChatOnline />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

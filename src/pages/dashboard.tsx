@@ -37,7 +37,6 @@ export default function Dashboard() {
 
 Dashboard.layout = Admin;
 
-
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const apiClient = getAPIClient(ctx);
   const { ['nextauth.token']: token } = parseCookies(ctx);
