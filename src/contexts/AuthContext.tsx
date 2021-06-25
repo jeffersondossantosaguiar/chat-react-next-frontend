@@ -8,7 +8,10 @@ import axios from "axios";
 import { GetServerSideProps } from "next";
 import { getAPIClient } from "../services/axios";
 
+import io, { Socket } from 'socket.io-client';
+
 type User = {
+  _id: string;
   name: string;
   email: string;
   avatar_url: string;
@@ -23,17 +26,22 @@ type AuthContextType = {
   isAuthenticated: boolean;
   user: User;
   signIn: (data: SignInData) => Promise<void>;
+  token: string;
+  /*   socket: Socket; */
 };
 
 export const AuthContext = createContext({} as AuthContextType);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState(null);
+  /* const [socket, setSocket] = useState(null); */
 
   const isAuthenticated = !!user;
 
   useEffect(() => {
     const { 'nextauth.token': token } = parseCookies();
+    setToken(token);
 
     if (token) {
       recoverUserInformation().then(user => {
@@ -41,6 +49,11 @@ export function AuthProvider({ children }) {
       });
     }
   }, []);
+
+  /*   useEffect(() => {
+      setSocket(io('http://localhost:3001/chat'));
+  
+    }, []); */
 
   async function signIn({ email, password }: SignInData) {
 
@@ -60,28 +73,28 @@ export function AuthProvider({ children }) {
     Router.push('/dashboard');
   }
 
-  const getServerSideProps: GetServerSideProps = async (ctx) => {
-    const apiClient = getAPIClient(ctx);
-    const { ['nextauth.token']: token } = parseCookies(ctx);
-
-    if (!token) {
+  /*   const getServerSideProps: GetServerSideProps = async (ctx) => {
+      const apiClient = getAPIClient(ctx);
+      const { ['nextauth.token']: token } = parseCookies(ctx);
+  
+      if (!token) {
+        return {
+          redirect: {
+            destination: '/',
+            permanent: false,
+          }
+        };
+      }
+       
+        await apiClient.get('/users')
+  
       return {
-        redirect: {
-          destination: '/',
-          permanent: false,
-        }
+        props: {}
       };
-    }
-    /* 
-      await apiClient.get('/users') */
-
-    return {
-      props: {}
-    };
-  };
+    }; */
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, signIn }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, signIn, token }}>
       {children}
     </AuthContext.Provider>
   );

@@ -24,8 +24,6 @@ function classNames(...classes) {
 }
 
 function singOut() {
-  console.log('teste');
-
   destroyCookie(null, 'nextauth.token');
   Router.push('/');
 }
