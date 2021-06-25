@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { setCookie, parseCookies } from 'nookies';
+import { setCookie, parseCookies, destroyCookie } from 'nookies';
 import Router from 'next/router';
 
 import { recoverUserInformation, signInRequest } from "../services/auth";
@@ -26,8 +26,10 @@ type AuthContextType = {
   isAuthenticated: boolean;
   user: User;
   signIn: (data: SignInData) => Promise<void>;
+  singOut: () => void;
   token: string;
-  /*   socket: Socket; */
+  socket: Socket;
+  onlineUsers: any;
 };
 
 export const AuthContext = createContext({} as AuthContextType);
@@ -35,7 +37,8 @@ export const AuthContext = createContext({} as AuthContextType);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState(null);
-  /* const [socket, setSocket] = useState(null); */
+  const [socket, setSocket] = useState<Socket>(null);
+  const [onlineUsers, setOnlineUsers] = useState([]);
 
   const isAuthenticated = !!user;
 
@@ -50,10 +53,22 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  /*   useEffect(() => {
+  useEffect(() => {
+    console.log(isAuthenticated);
+    console.log(user);
+    if (user)
       setSocket(io('http://localhost:3001/chat'));
-  
-    }, []); */
+  }, [user]);
+
+  useEffect(() => {
+    socket?.emit("addUser", user._id);
+  }, [socket]);
+
+  useEffect(() => {
+    socket?.on("getUsers", users => {
+      setOnlineUsers(users);
+    });
+  }, [socket]);
 
   async function signIn({ email, password }: SignInData) {
 
@@ -71,6 +86,12 @@ export function AuthProvider({ children }) {
     setUser(user);
 
     Router.push('/dashboard');
+  }
+
+  function singOut() {
+    socket.disconnect();
+    destroyCookie(null, 'nextauth.token');
+    Router.push('/');
   }
 
   /*   const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -94,7 +115,7 @@ export function AuthProvider({ children }) {
     }; */
 
   return (
-    <AuthContext.Provider value={{ user, isAuthenticated, signIn, token }}>
+    <AuthContext.Provider value={{ user, isAuthenticated, signIn, singOut, token, socket, onlineUsers }}>
       {children}
     </AuthContext.Provider>
   );

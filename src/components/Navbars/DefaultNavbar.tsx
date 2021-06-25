@@ -23,13 +23,8 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
 
-function singOut() {
-  destroyCookie(null, 'nextauth.token');
-  Router.push('/');
-}
-
 export default function NavBar() {
-  const { user } = useContext(AuthContext);
+  const { user, singOut } = useContext(AuthContext);
   const router = useRouter();
 
 
